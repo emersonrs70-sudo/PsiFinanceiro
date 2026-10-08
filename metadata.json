@@ -1,0 +1,6 @@
+{
+  "name": "Controle Financeiro",
+  "description": "Sistema de controle financeiro pessoal e empresarial com salvamento na nuvem.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

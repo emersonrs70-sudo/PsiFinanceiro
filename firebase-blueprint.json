@@ -1,0 +1,25 @@
+{
+  "entities": {
+    "Sessao": {
+      "title": "Sessao",
+      "description": "Registro de sessão e faturamento de paciente",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "nomePaciente": { "type": "string", "maxLength": 150 },
+        "dataStr": { "type": "string", "maxLength": 30 },
+        "valor": { "type": "number" },
+        "observacoes": { "type": "string", "maxLength": 500 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["nomePaciente", "dataStr", "valor", "userId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/sessoes/{sessaoId}": {
+      "schema": { "$ref": "#/entities/Sessao" },
+      "description": "Sessões e faturamentos pertencentes a um profissional"
+    }
+  }
+}

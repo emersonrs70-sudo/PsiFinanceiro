@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+
+      match /sessoes/{sessaoId} {
+        allow get: if isOwner(userId) && isValidId(sessaoId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId)
+          && isValidId(sessaoId)
+          && request.resource.data.userId == request.auth.uid
+          && request.resource.data.nomePaciente is string && request.resource.data.nomePaciente.size() <= 150
+          && request.resource.data.valor is number
+          && request.resource.data.dataStr is string && request.resource.data.dataStr.size() <= 30;
+
+        allow update: if isOwner(userId)
+          && isValidId(sessaoId)
+          && request.resource.data.userId == existing().userId
+          && request.resource.data.nomePaciente is string && request.resource.data.nomePaciente.size() <= 150
+          && request.resource.data.valor is number
+          && request.resource.data.dataStr is string && request.resource.data.dataStr.size() <= 30;
+
+        allow delete: if isOwner(userId) && isValidId(sessaoId);
+      }
+    }
+  }
+}
